@@ -16,6 +16,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../../context/CartContext";
+import CartModal from "../components/CartModal";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -63,6 +64,15 @@ const settings = ["Profile", "Logout"];
 
 function Header() {
   const { cartItems } = useCart();
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
+
+  const handleOpenCart = () => {
+    setIsCartOpen(true);
+  };
+
+  const handleCloseCart = () => {
+    setIsCartOpen(false);
+  };
 
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -165,7 +175,16 @@ function Header() {
               />
             </Search>
           </Box>
-          <Box sx={{ flexGrow: 0, mr: 4, mt: 1, position: "relative" }}>
+          <Box
+            sx={{
+              flexGrow: 0,
+              mr: 4,
+              mt: 1,
+              position: "relative",
+              cursor: "pointer",
+            }}
+            onClick={handleOpenCart}
+          >
             <div className="py-0.5 px-2 bg-red-500 text-white rounded-full absolute -top-4 -right-4">
               {cartItemCount}
             </div>
@@ -182,6 +201,7 @@ function Header() {
           </IconButton>
         </Toolbar>
       </Container>
+      <CartModal isOpen={isCartOpen} onClose={handleCloseCart} />
     </AppBar>
   );
 }

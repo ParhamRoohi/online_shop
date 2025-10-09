@@ -32,6 +32,7 @@ function ProductCard({
       description: description,
       price: price,
       quantity: 1,
+      image: image,
     });
   };
   return (

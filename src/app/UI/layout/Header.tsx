@@ -17,6 +17,7 @@ import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../../context/CartContext";
 import CartModal from "../components/CartModal";
+import { useCategory } from "@/app/context/CategoryContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -72,6 +73,7 @@ const categories = [
 function Header() {
   const { cartItems } = useCart();
   const [isCartOpen, setIsCartOpen] = React.useState(false);
+  const { setSelectedCategory, setSearchQuery } = useCategory();
 
   const handleOpenCart = () => {
     setIsCartOpen(true);
@@ -105,6 +107,15 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    handleCloseNavMenu();
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
   };
 
   return (
@@ -163,6 +174,7 @@ function Header() {
               <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
+                onChange={handleSearchChange}
               />
             </Search>
           </Box>
@@ -210,7 +222,7 @@ function Header() {
             onClose={handleCloseNavMenu}
           >
             {categories.map((page) => (
-              <MenuItem key={page} onClick={handleCloseNavMenu}>
+              <MenuItem key={page} onClick={() => handleCategoryClick(page)}>
                 <Typography textAlign="center">{page}</Typography>
               </MenuItem>
             ))}

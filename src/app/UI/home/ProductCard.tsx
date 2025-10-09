@@ -23,7 +23,8 @@ function ProductCard({
   price,
   rating,
 }: ProductCardProps) {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, increaseQuantity, decreaseQuantity } =
+    useCart();
 
   const handleAddToCart = () => {
     addToCart({
@@ -35,6 +36,9 @@ function ProductCard({
       image: image,
     });
   };
+
+  const cartItem = cartItems.find((item) => item.id === id);
+
   return (
     <article className="flex w-full flex-col shadow-md hover:shadow-xl transition-shadow duration-150 rounded-xl">
       <div className="h-96">
@@ -56,12 +60,30 @@ function ProductCard({
             <span>$ {price}</span>
             <span>Rata: {rating.rate}</span>
           </div>
-          <button
-            className="bg-blue-600 text-white rounded-lg px-3 py-[6px] shadow-[0_0_15px_1px_] shadow-indigo-500/40 hover:shadow-indigo-500/90 transition-shadow duration-150"
-            onClick={handleAddToCart}
-          >
-            Add to Cart
-          </button>
+          {cartItem ? (
+            <div className="flex items-center justify-around">
+              <button
+                className="bg-blue-600 text-white rounded-lg w-1/4 py-[6px] shadow-[0_0_15px_1px_] shadow-indigo-500/40 hover:shadow-indigo-500/90 transition-shadow duration-150"
+                onClick={() => decreaseQuantity(id)}
+              >
+                -
+              </button>
+              <span>{cartItem.quantity}</span>
+              <button
+                className="bg-blue-600 text-white rounded-lg w-1/4 py-[6px] shadow-[0_0_15px_1px_] shadow-indigo-500/40 hover:shadow-indigo-500/90 transition-shadow duration-150"
+                onClick={() => increaseQuantity(id)}
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            <button
+              className="bg-blue-600 text-white rounded-lg px-3 py-[6px] shadow-[0_0_15px_1px_] shadow-indigo-500/40 hover:shadow-indigo-500/90 transition-shadow duration-150"
+              onClick={handleAddToCart}
+            >
+              Add to Cart
+            </button>
+          )}
         </div>
       </section>
     </article>

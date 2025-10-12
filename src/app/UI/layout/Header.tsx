@@ -16,6 +16,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../../context/CartContext";
+import CartModal from "../components/CartModal";
+import { useCategory } from "@/app/context/CategoryContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -60,9 +62,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const settings = ["Profile", "Logout"];
+const categories = [
+  "All",
+  "Electronics",
+  "Jewelery",
+  "Men's Clothing",
+  "Women's Clothing",
+];
 
 function Header() {
   const { cartItems } = useCart();
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
+  const { setSelectedCategory, setSearchQuery } = useCategory();
+
+  const handleOpenCart = () => {
+    setIsCartOpen(true);
+  };
+
+  const handleCloseCart = () => {
+    setIsCartOpen(false);
+  };
 
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -88,6 +107,15 @@ function Header() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    handleCloseNavMenu();
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
   };
 
   return (
@@ -129,29 +157,13 @@ function Header() {
             <IconButton
               size="large"
               aria-label="account of current user"
-              aria-controls="menu-appbar"
+              aria-controls="nav-menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
               color="inherit"
             >
               <MenuIcon />
             </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{ display: { xs: "block", md: "none" } }}
-            ></Menu>
           </Box>
 
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
@@ -162,10 +174,20 @@ function Header() {
               <StyledInputBase
                 placeholder="Search…"
                 inputProps={{ "aria-label": "search" }}
+                onChange={handleSearchChange}
               />
             </Search>
           </Box>
-          <Box sx={{ flexGrow: 0, mr: 4, mt: 1, position: "relative" }}>
+          <Box
+            sx={{
+              flexGrow: 0,
+              mr: 4,
+              mt: 1,
+              position: "relative",
+              cursor: "pointer",
+            }}
+            onClick={handleOpenCart}
+          >
             <div className="py-0.5 px-2 bg-red-500 text-white rounded-full absolute -top-4 -right-4">
               {cartItemCount}
             </div>
@@ -177,11 +199,37 @@ function Header() {
             edge="start"
             color="inherit"
             aria-label="menu"
+            aria-controls="nav-menu-appbar"
+            aria-haspopup="true"
+            onClick={handleOpenNavMenu}
+            sx={{ display: { xs: "none", md: "flex" } }}
           >
             <MenuIcon />
           </IconButton>
+          <Menu
+            id="nav-menu-appbar"
+            anchorEl={anchorElNav}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
+          >
+            {categories.map((page) => (
+              <MenuItem key={page} onClick={() => handleCategoryClick(page)}>
+                <Typography textAlign="center">{page}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
         </Toolbar>
       </Container>
+      <CartModal isOpen={isCartOpen} onClose={handleCloseCart} />
     </AppBar>
   );
 }

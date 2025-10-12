@@ -18,6 +18,32 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../../context/CartContext";
 import CartModal from "../components/CartModal";
 import { useCategory } from "@/app/context/CategoryContext";
+import { getUser } from "@/app/api/data";
+import { Button } from "@mui/material";
+import { useRouter } from "next/navigation";
+import UserDetailsModal from "./UserDetailsModal";
+
+interface User {
+  id: number;
+  email: string;
+  username: string;
+  password: string;
+  name: {
+    firstname: string;
+    lastname: string;
+  };
+  address: {
+    city: string;
+    street: string;
+    number: number;
+    zipcode: string;
+    geolocation: {
+      lat: string;
+      long: string;
+    };
+  };
+  phone: string;
+}
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -74,6 +100,21 @@ function Header() {
   const { cartItems } = useCart();
   const [isCartOpen, setIsCartOpen] = React.useState(false);
   const { setSelectedCategory, setSearchQuery } = useCategory();
+  const [user, setUser] = React.useState<User | null>(null);
+  const [isUserDetailsOpen, setIsUserDetailsOpen] = React.useState(false);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const userId = sessionStorage.getItem("userId");
+      if (userId) {
+        const userData = await getUser(Number(userId));
+        setUser(userData);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleOpenCart = () => {
     setIsCartOpen(true);
@@ -118,40 +159,78 @@ function Header() {
     setSearchQuery(event.target.value);
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("userId");
+    setUser(null);
+    handleCloseUserMenu();
+  };
+
+  const handleProfileClick = () => {
+    setIsUserDetailsOpen(true);
+    handleCloseUserMenu();
+  };
+
   return (
     <AppBar position="fixed">
-      <Container maxWidth="xl">
+      <Container maxWidth="2xl">
         <Toolbar disableGutters sx={{ px: 2 }}>
           <Box sx={{ flexGrow: 0, mr: 2 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Profile Image" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: "center" }}>
-                    {setting}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+            {user ? (
+              <>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Profile Image">
+                      {user.name.firstname.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem
+                      key={setting}
+                      onClick={
+                        setting === "Logout"
+                          ? handleLogout
+                          : setting === "Profile"
+                          ? handleProfileClick
+                          : handleCloseUserMenu
+                      }
+                    >
+                      <Typography sx={{ textAlign: "center" }}>
+                        {setting}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </>
+            ) : (
+              <Button
+                color="inherit"
+                onClick={() => router.push("/login")}
+                sx={{
+                  color: "white",
+                  backgroundColor: "transparent",
+                  border: "1px solid white",
+                }}
+              >
+                Login
+              </Button>
+            )}
           </Box>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -230,6 +309,12 @@ function Header() {
         </Toolbar>
       </Container>
       <CartModal isOpen={isCartOpen} onClose={handleCloseCart} />
+      {user && (
+        <UserDetailsModal
+          user={isUserDetailsOpen ? user : null}
+          close={() => setIsUserDetailsOpen(false)}
+        />
+      )}
     </AppBar>
   );
 }

@@ -42,6 +42,7 @@ function Page() {
       );
 
       if (user) {
+        sessionStorage.setItem("userId", user.id.toString());
         router.push("/");
       } else {
         setError("Invalid email or password");

@@ -2,6 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { useCart } from "../../context/CartContext";
+import AuthModal from "../components/AuthModal";
 
 interface ProductCardProps {
   id: number;
@@ -25,16 +26,22 @@ function ProductCard({
 }: ProductCardProps) {
   const { addToCart, cartItems, increaseQuantity, decreaseQuantity } =
     useCart();
+  const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
   const handleAddToCart = () => {
-    addToCart({
-      id: id,
-      title: title,
-      description: description,
-      price: price,
-      quantity: 1,
-      image: image,
-    });
+    const userId = sessionStorage.getItem("userId");
+    if (userId) {
+      addToCart({
+        id: id,
+        title: title,
+        description: description,
+        price: price,
+        quantity: 1,
+        image: image,
+      });
+    } else {
+      setIsAuthModalOpen(true);
+    }
   };
 
   const cartItem = cartItems.find((item) => item.id === id);
@@ -86,6 +93,10 @@ function ProductCard({
           )}
         </div>
       </section>
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </article>
   );
 }

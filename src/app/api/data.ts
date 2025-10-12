@@ -9,3 +9,14 @@ export const getAllProducts = async () => {
     return [];
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const response = await axios.get("https://fakestoreapi.com/users");
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return [];
+  }
+};

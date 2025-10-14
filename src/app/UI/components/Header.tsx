@@ -18,6 +18,32 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useCart } from "../../context/CartContext";
 import CartModal from "../components/CartModal";
 import { useCategory } from "@/app/context/CategoryContext";
+import { getUser } from "@/app/api/data";
+import { Button } from "@mui/material";
+import { useRouter } from "next/navigation";
+import UserDetailsModal from "./UserDetailsModal";
+
+interface User {
+  id: number;
+  email: string;
+  username: string;
+  password: string;
+  name: {
+    firstname: string;
+    lastname: string;
+  };
+  address: {
+    city: string;
+    street: string;
+    number: number;
+    zipcode: string;
+    geolocation: {
+      lat: string;
+      long: string;
+    };
+  };
+  phone: string;
+}
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -26,10 +52,11 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
+  marginRight: theme.spacing(2),
   marginLeft: 0,
-  width: "100%",
+  width: "auto",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(3),
     width: "auto",
   },
 }));
@@ -49,13 +76,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
+    width: "12ch",
+    "&:focus": {
+      width: "18ch",
+    },
     [theme.breakpoints.up("sm")]: {
-      width: "12ch",
+      width: "20ch",
       "&:focus": {
-        width: "20ch",
+        width: "25ch",
       },
     },
   },
@@ -74,6 +104,21 @@ function Header() {
   const { cartItems } = useCart();
   const [isCartOpen, setIsCartOpen] = React.useState(false);
   const { setSelectedCategory, setSearchQuery } = useCategory();
+  const [user, setUser] = React.useState<User | null>(null);
+  const [isUserDetailsOpen, setIsUserDetailsOpen] = React.useState(false);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const userId = sessionStorage.getItem("userId");
+      if (userId) {
+        const userData = await getUser(Number(userId));
+        setUser(userData);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleOpenCart = () => {
     setIsCartOpen(true);
@@ -118,55 +163,81 @@ function Header() {
     setSearchQuery(event.target.value);
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("userId");
+    setUser(null);
+    handleCloseUserMenu();
+  };
+
+  const handleProfileClick = () => {
+    setIsUserDetailsOpen(true);
+    handleCloseUserMenu();
+  };
+
   return (
     <AppBar position="fixed">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ px: 2 }}>
-          <Box sx={{ flexGrow: 0, mr: 2 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Profile Image" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: "center" }}>
-                    {setting}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+      <Container maxWidth="2xl">
+        <Toolbar disableGutters sx={{ px: { xs: 1, sm: 2 } }}>
+          <Box sx={{ flexGrow: 0, mr: { xs: 1, sm: 2 } }}>
+            {user ? (
+              <>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Profile Image">
+                      {user.name.firstname.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem
+                      key={setting}
+                      onClick={
+                        setting === "Logout"
+                          ? handleLogout
+                          : setting === "Profile"
+                          ? handleProfileClick
+                          : handleCloseUserMenu
+                      }
+                    >
+                      <Typography sx={{ textAlign: "center" }}>
+                        {setting}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </>
+            ) : (
+              <Button
+                color="inherit"
+                onClick={() => router.push("/login")}
+                sx={{
+                  color: "white",
+                  backgroundColor: "transparent",
+                  border: "1px solid white",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Login
+              </Button>
+            )}
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="nav-menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ flexGrow: 1, display: "flex" }}>
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -181,7 +252,7 @@ function Header() {
           <Box
             sx={{
               flexGrow: 0,
-              mr: 4,
+              mr: { xs: 2, sm: 2 },
               mt: 1,
               position: "relative",
               cursor: "pointer",
@@ -196,13 +267,12 @@ function Header() {
 
           <IconButton
             size="large"
-            edge="start"
             color="inherit"
             aria-label="menu"
             aria-controls="nav-menu-appbar"
             aria-haspopup="true"
             onClick={handleOpenNavMenu}
-            sx={{ display: { xs: "none", md: "flex" } }}
+            sx={{ display: "flex" }}
           >
             <MenuIcon />
           </IconButton>
@@ -230,6 +300,12 @@ function Header() {
         </Toolbar>
       </Container>
       <CartModal isOpen={isCartOpen} onClose={handleCloseCart} />
+      {user && (
+        <UserDetailsModal
+          user={isUserDetailsOpen ? user : null}
+          close={() => setIsUserDetailsOpen(false)}
+        />
+      )}
     </AppBar>
   );
 }

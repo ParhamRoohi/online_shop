@@ -38,7 +38,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 600,
+          width: { xs: "90%", sm: 600 },
           bgcolor: "background.paper",
           border: "2px solid #000",
           boxShadow: 24,
@@ -53,7 +53,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
             <List>
               {cartItems.map((item) => (
                 <React.Fragment key={item.id}>
-                  <ListItem sx={{ gap: 2 }}>
+                  <ListItem sx={{ gap: 2, flexWrap: "wrap" }}>
                     <Image
                       src={item.image}
                       alt={item.title}

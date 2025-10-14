@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { getAllProducts } from "../../api/data";
 import ProductCard from "./ProductCard";
 import { useCategory } from "@/app/context/CategoryContext";
+import ProductSkeleton from "../components/ProductSkeleton";
 
 interface Product {
   id: number;
@@ -43,6 +44,16 @@ function ProductList() {
       product.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  if (products.length === 0) {
+    return (
+      <div className="grid xl:grid-cols-3 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <ProductSkeleton key={index} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid xl:grid-cols-3 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
       {filteredProducts.map((item) => (
@@ -52,4 +63,12 @@ function ProductList() {
   );
 }
 
-export default ProductList;
+function ProductListWrapper() {
+  return (
+    <Suspense fallback={<ProductSkeleton />}>
+      <ProductList />
+    </Suspense>
+  );
+}
+
+export default ProductListWrapper;

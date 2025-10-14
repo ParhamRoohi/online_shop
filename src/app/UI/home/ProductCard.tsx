@@ -47,7 +47,7 @@ function ProductCard({
   const cartItem = cartItems.find((item) => item.id === id);
 
   return (
-    <article className="flex w-full flex-col shadow-md hover:shadow-xl transition-shadow duration-150 rounded-xl">
+    <article className="flex w-11/12 mx-auto sm:w-full sm:mx-0 flex-col shadow-md hover:shadow-xl transition-shadow duration-150 rounded-xl">
       <div className="h-96">
         <Image
           className="w-full h-full py-10 px-10 object-contain"

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getAllUsers } from "@/app/api/data";
 import { useRouter } from "next/navigation";
 
@@ -30,6 +30,12 @@ function Page() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    if (sessionStorage.getItem("userId")) {
+      router.push("/");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

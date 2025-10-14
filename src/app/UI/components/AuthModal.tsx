@@ -24,7 +24,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: { xs: "90%", sm: 400 },
           bgcolor: "background.paper",
           border: "2px solid #000",
           boxShadow: 24,
@@ -34,7 +34,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         <Typography variant="h6" component="h2">
           Authentication Required
         </Typography>
-        <Typography sx={{ mt: 2 }}>
+        <Typography sx={{ mt: 2, color: "red" }}>
           You need to be logged in to add items to your cart.
         </Typography>
         <Button onClick={handleLoginRedirect} sx={{ mt: 2 }}>

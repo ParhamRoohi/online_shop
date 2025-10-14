@@ -52,10 +52,11 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
+  marginRight: theme.spacing(2),
   marginLeft: 0,
-  width: "100%",
+  width: "auto",
   [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
+    marginLeft: theme.spacing(3),
     width: "auto",
   },
 }));
@@ -75,13 +76,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: "100%",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
+    width: "12ch",
+    "&:focus": {
+      width: "18ch",
+    },
     [theme.breakpoints.up("sm")]: {
-      width: "12ch",
+      width: "20ch",
       "&:focus": {
-        width: "20ch",
+        width: "25ch",
       },
     },
   },
@@ -173,8 +177,8 @@ function Header() {
   return (
     <AppBar position="fixed">
       <Container maxWidth="2xl">
-        <Toolbar disableGutters sx={{ px: 2 }}>
-          <Box sx={{ flexGrow: 0, mr: 2 }}>
+        <Toolbar disableGutters sx={{ px: { xs: 1, sm: 2 } }}>
+          <Box sx={{ flexGrow: 0, mr: { xs: 1, sm: 2 } }}>
             {user ? (
               <>
                 <Tooltip title="Open settings">
@@ -226,26 +230,14 @@ function Header() {
                   color: "white",
                   backgroundColor: "transparent",
                   border: "1px solid white",
+                  whiteSpace: "nowrap",
                 }}
               >
                 Login
               </Button>
             )}
           </Box>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="nav-menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-          </Box>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box sx={{ flexGrow: 1, display: "flex" }}>
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -260,7 +252,7 @@ function Header() {
           <Box
             sx={{
               flexGrow: 0,
-              mr: 4,
+              mr: { xs: 2, sm: 2 },
               mt: 1,
               position: "relative",
               cursor: "pointer",
@@ -275,13 +267,12 @@ function Header() {
 
           <IconButton
             size="large"
-            edge="start"
             color="inherit"
             aria-label="menu"
             aria-controls="nav-menu-appbar"
             aria-haspopup="true"
             onClick={handleOpenNavMenu}
-            sx={{ display: { xs: "none", md: "flex" } }}
+            sx={{ display: "flex" }}
           >
             <MenuIcon />
           </IconButton>

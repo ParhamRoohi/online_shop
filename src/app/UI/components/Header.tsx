@@ -103,7 +103,8 @@ const categories = [
 function Header() {
   const { cartItems } = useCart();
   const [isCartOpen, setIsCartOpen] = React.useState(false);
-  const { setSelectedCategory, setSearchQuery } = useCategory();
+  const { selectedCategory, setSelectedCategory, setSearchQuery } =
+    useCategory();
   const [user, setUser] = React.useState<User | null>(null);
   const [isUserDetailsOpen, setIsUserDetailsOpen] = React.useState(false);
   const router = useRouter();
@@ -292,7 +293,15 @@ function Header() {
             onClose={handleCloseNavMenu}
           >
             {categories.map((page) => (
-              <MenuItem key={page} onClick={() => handleCategoryClick(page)}>
+              <MenuItem
+                key={page}
+                onClick={() => handleCategoryClick(page)}
+                sx={{
+                  ...(selectedCategory === page && {
+                    backgroundColor: "rgba(0, 0, 0, 0.08)",
+                  }),
+                }}
+              >
                 <Typography textAlign="center">{page}</Typography>
               </MenuItem>
             ))}

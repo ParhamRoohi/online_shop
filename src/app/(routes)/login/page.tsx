@@ -59,10 +59,10 @@ function Page() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen w-full">
+    <div className="flex justify-center items-center h-screen w-full ">
       <form
         onSubmit={handleSubmit}
-        className="rounded-lg border-2 h-100 w-100 flex flex-col p-4 justify-center gap-8"
+        className="rounded-lg border-2 w-full max-w-sm flex flex-col p-4 justify-center gap-8 m-4"
       >
         <h1 className="text-2xl text-bold text-center">LOGIN</h1>
         {error && <p className="text-red-500 text-center">{error}</p>}

@@ -50,7 +50,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         </Typography>
         {cartItems.length > 0 ? (
           <>
-            <List>
+            <List sx={{ maxHeight: 400, overflowY: "auto" }}>
               {cartItems.map((item) => (
                 <React.Fragment key={item.id}>
                   <ListItem sx={{ gap: 2, flexWrap: "wrap" }}>

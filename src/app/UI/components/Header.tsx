@@ -6,7 +6,6 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -15,6 +14,7 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useCart } from "../../context/CartContext";
 import CartModal from "../components/CartModal";
 import { useCategory } from "@/app/context/CategoryContext";
@@ -266,17 +266,14 @@ function Header() {
             <ShoppingCartIcon />
           </Box>
 
-          <IconButton
-            size="large"
+          <Button
             color="inherit"
-            aria-label="menu"
-            aria-controls="nav-menu-appbar"
-            aria-haspopup="true"
             onClick={handleOpenNavMenu}
-            sx={{ display: "flex" }}
+            sx={{ color: "white", textTransform: "none" }}
+            endIcon={<ArrowDropDownIcon />}
           >
-            <MenuIcon />
-          </IconButton>
+            {selectedCategory}
+          </Button>
           <Menu
             id="nav-menu-appbar"
             anchorEl={anchorElNav}

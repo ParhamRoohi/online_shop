@@ -46,7 +46,7 @@ function ProductList() {
 
   if (products.length === 0) {
     return (
-      <div className="grid xl:grid-cols-3 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
+      <div className="grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <ProductSkeleton key={index} />
         ))}
@@ -55,7 +55,7 @@ function ProductList() {
   }
 
   return (
-    <div className="grid xl:grid-cols-3 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
+    <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
       {filteredProducts.map((item) => (
         <ProductCard {...item} key={item.id} />
       ))}

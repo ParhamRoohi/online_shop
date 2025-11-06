@@ -1,5 +1,6 @@
 import ProductList from "./UI/home/ProductList";
 import Header from "./UI/components/Header";
+import React from "react";
 
 export default function Home() {
   return (

@@ -1,11 +1,6 @@
-import LoginForm from "@/app/UI/components/LoginForm";
-
-
+import LoginForm from "@/app/UI/login/LoginForm";
 function Page() {
-
-  return (
-    <LoginForm/>
-  );
+  return <LoginForm />;
 }
 
 export default Page;

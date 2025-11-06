@@ -16,12 +16,12 @@ import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useCart } from "../../context/CartContext";
-import CartModal from "../components/CartModal";
 import { useCategory } from "@/app/context/CategoryContext";
 import { getUser } from "@/app/api/data";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import UserDetailsModal from "./UserDetailsModal";
+import Link from "next/link";
 
 interface User {
   id: number;
@@ -102,7 +102,6 @@ const categories = [
 
 function Header() {
   const { cartItems } = useCart();
-  const [isCartOpen, setIsCartOpen] = React.useState(false);
   const { selectedCategory, setSelectedCategory, setSearchQuery } =
     useCategory();
   const [user, setUser] = React.useState<User | null>(null);
@@ -120,14 +119,6 @@ function Header() {
 
     fetchUser();
   }, []);
-
-  const handleOpenCart = () => {
-    setIsCartOpen(true);
-  };
-
-  const handleCloseCart = () => {
-    setIsCartOpen(false);
-  };
 
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -250,22 +241,22 @@ function Header() {
               />
             </Search>
           </Box>
-          <Box
-            sx={{
-              flexGrow: 0,
-              mr: { xs: 2, sm: 2 },
-              mt: 1,
-              position: "relative",
-              cursor: "pointer",
-            }}
-            onClick={handleOpenCart}
-          >
-            <div className="py-0.5 px-2 bg-red-500 text-white rounded-full absolute -top-4 -right-4">
-              {cartItemCount}
-            </div>
-            <ShoppingCartIcon />
-          </Box>
-
+          <Link href="/cart">
+            <Box
+              sx={{
+                flexGrow: 0,
+                mr: { xs: 2, sm: 2 },
+                mt: 1,
+                position: "relative",
+                cursor: "pointer",
+              }}
+            >
+              <div className="py-0.5 px-2 bg-red-500 text-white rounded-full absolute -top-4 -right-4">
+                {cartItemCount}
+              </div>
+              <ShoppingCartIcon />
+            </Box>
+          </Link>
           <Button
             color="inherit"
             onClick={handleOpenNavMenu}
@@ -305,7 +296,6 @@ function Header() {
           </Menu>
         </Toolbar>
       </Container>
-      <CartModal isOpen={isCartOpen} onClose={handleCloseCart} />
       {user && (
         <UserDetailsModal
           user={isUserDetailsOpen ? user : null}

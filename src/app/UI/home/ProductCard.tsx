@@ -1,10 +1,12 @@
-
+"use client";
 import React from "react";
 import Image from "next/image";
+import Rating from "@mui/material/Rating";
+
 import { useCart } from "../../context/CartContext";
 import AuthModal from "../components/AuthModal";
 
-interface ProductCardProps {
+export interface ProductCardProps {
   id: number;
   image: string;
   title: string;
@@ -47,7 +49,7 @@ function ProductCard({
   const cartItem = cartItems.find((item) => item.id === id);
 
   return (
-    <article className="flex w-11/12 mx-auto sm:w-full sm:mx-0 flex-col shadow-md hover:shadow-xl transition-shadow duration-150 rounded-xl">
+    <article className="flex h-full w-11/12 mx-auto sm:w-full sm:mx-0 flex-col shadow-md hover:shadow-xl transition-shadow duration-150 rounded-xl justify-between">
       <div className="h-96">
         <Image
           className="w-full h-full py-10 px-10 object-contain"
@@ -57,20 +59,25 @@ function ProductCard({
           height={100}
         />
       </div>
-      <section className="flex flex-col justify-between h-full mx-6 my-4 gap-3">
+      <section className="flex flex-col justify-between grow mx-6 my-4 gap-3">
         <div>
-          <h1 className="line-clamp-1 text-lg font-[500]">{title}</h1>
-          <p className="line-clamp-5 ">{description}</p>
+          <h1 className="line-clamp-1 text-lg font-bold">{title}</h1>
+          <p className="line-clamp-5 mt-1">{description}</p>
         </div>
         <div className="flex flex-col gap-2">
           <div className="text-xl font-[600] flex flex-row justify-between">
             <span>$ {price}</span>
-            <span>Rata: {rating.rate}</span>
+            <Rating
+              name="half-rating-read"
+              precision={0.5}
+              value={rating.rate}
+              readOnly
+            />
           </div>
           {cartItem ? (
             <div className="flex items-center justify-around">
               <button
-                className="bg-blue-600 text-white rounded-lg w-1/4 py-[6px] shadow-[0_0_15px_1px_] shadow-indigo-500/40 hover:shadow-indigo-500/90 transition-shadow duration-150"
+                className="bg-blue-600 text-white font-bold rounded-lg w-1/4 py-[6px] shadow-[0_0_15px_1px_] shadow-indigo-500/40 hover:shadow-indigo-500/90 transition-shadow duration-150"
                 onClick={() => decreaseQuantity(id)}
               >
                 -

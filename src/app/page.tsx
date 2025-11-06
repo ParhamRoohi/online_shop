@@ -1,5 +1,4 @@
 import ProductList from "./UI/home/ProductList";
-
 import Header from "./UI/components/Header";
 
 export default function Home() {

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../../api/data";
 import ProductCard from "./ProductCard";
-import ProductSkeleton from "../components/ProductSkeleton";
+import ProductSkeleton from "./ProductSkeleton";
 
 interface Product {
   id: number;
@@ -24,11 +24,13 @@ interface ProductListProps {
 
 function ProductList({ selectedCategory, searchQuery }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
       const allProducts = await getAllProducts();
       setProducts(allProducts);
+      setLoading(false);
     };
     fetchProducts();
   }, []);
@@ -47,7 +49,7 @@ function ProductList({ selectedCategory, searchQuery }: ProductListProps) {
       product.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (products.length === 0) {
+  if (loading) {
     return (
       <div className="grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
         {Array.from({ length: 6 }).map((_, index) => (

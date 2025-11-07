@@ -1,8 +1,7 @@
 "use client";
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllProducts } from "../../api/data";
 import ProductCard from "./ProductCard";
-import { useCategory } from "@/app/context/CategoryContext";
 import ProductSkeleton from "../components/ProductSkeleton";
 
 interface Product {
@@ -18,9 +17,13 @@ interface Product {
   };
 }
 
-function ProductList() {
+interface ProductListProps {
+  selectedCategory: string;
+  searchQuery: string;
+}
+
+function ProductList({ selectedCategory, searchQuery }: ProductListProps) {
   const [products, setProducts] = useState<Product[]>([]);
-  const { selectedCategory, searchQuery } = useCategory();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -63,12 +66,4 @@ function ProductList() {
   );
 }
 
-function ProductListWrapper() {
-  return (
-    <Suspense fallback={<ProductSkeleton />}>
-      <ProductList />
-    </Suspense>
-  );
-}
-
-export default ProductListWrapper;
+export default ProductList;

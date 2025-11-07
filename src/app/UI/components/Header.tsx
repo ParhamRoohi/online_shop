@@ -16,7 +16,6 @@ import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useCart } from "../../context/CartContext";
-import { useCategory } from "@/app/context/CategoryContext";
 import { getUser } from "@/app/api/data";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
@@ -100,10 +99,18 @@ const categories = [
   "Women's Clothing",
 ];
 
-function Header() {
+interface HeaderProps {
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
+  setSearchQuery: (query: string) => void;
+}
+
+function Header({
+  selectedCategory,
+  setSelectedCategory,
+  setSearchQuery,
+}: HeaderProps) {
   const { cartItems } = useCart();
-  const { selectedCategory, setSelectedCategory, setSearchQuery } =
-    useCategory();
   const [user, setUser] = React.useState<User | null>(null);
   const [isUserDetailsOpen, setIsUserDetailsOpen] = React.useState(false);
   const router = useRouter();

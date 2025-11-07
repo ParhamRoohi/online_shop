@@ -1,12 +1,10 @@
-import ProductList from "./UI/home/ProductList";
-import Header from "./UI/components/Header";
+import HomePage from "./UI/home/HomePage";
 import React from "react";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between py-24">
-      <Header />
-      <ProductList />
+      <HomePage />
     </main>
   );
 }

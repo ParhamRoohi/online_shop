@@ -34,7 +34,7 @@ function LoginForm() {
         if (sessionStorage.getItem("userId")) {
           router.push("/");
         }
-      }, []);
+      }, [router]);
     
       const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -52,7 +52,7 @@ function LoginForm() {
           } else {
             setError("Invalid email or password");
           }
-        } catch (err) {
+        } catch {
           setError("Failed to login. Please try again later.");
         }
       };

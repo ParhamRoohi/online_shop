@@ -3,13 +3,21 @@ import React, { Suspense } from "react";
 import ProductList from "./UI/home/ProductList";
 import ProductSkeleton from "./UI/home/ProductSkeleton";
 
-export default function Home({
-  searchParams,
-}: {
-  searchParams: { category?: string; q?: string };
-}) {
-  const selectedCategory = searchParams.category || "All";
-  const searchQuery = searchParams.q || "";
+
+export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const params = await searchParams;
+  const selectedCategory =
+    typeof params.category === "string"
+      ? params.category
+      : Array.isArray(params.category)
+      ? params.category[0]
+      : "All";
+  const searchQuery =
+    typeof params.q === "string"
+      ? params.q
+      : Array.isArray(params.q)
+      ? params.q[0]
+      : "";
 
   const skeleton = (
     <div className="grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">

@@ -10,11 +10,9 @@ export default function HomePage({ children }: { children: React.ReactNode }) {
   const [selectedCategory, setSelectedCategory] = useState(
     searchParams.get("category") || "All"
   );
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
 
   useEffect(() => {
     setSelectedCategory(searchParams.get("category") || "All");
-    setSearchQuery(searchParams.get("q") || "");
   }, [searchParams]);
 
   const handleSetCategory = (category: string) => {

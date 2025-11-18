@@ -1,8 +1,6 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { getAllProducts } from "../../api/data";
 import ProductCard from "./ProductCard";
-import ProductSkeleton from "./ProductSkeleton";
 
 interface Product {
   id: number;
@@ -22,18 +20,8 @@ interface ProductListProps {
   searchQuery: string;
 }
 
-function ProductList({ selectedCategory, searchQuery }: ProductListProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      const allProducts = await getAllProducts();
-      setProducts(allProducts);
-      setLoading(false);
-    };
-    fetchProducts();
-  }, []);
+async function ProductList({ selectedCategory, searchQuery }: ProductListProps) {
+  const products: Product[] = await getAllProducts();
 
   const filteredByCategory =
     selectedCategory === "All"
@@ -49,13 +37,11 @@ function ProductList({ selectedCategory, searchQuery }: ProductListProps) {
       product.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) {
+  if (filteredProducts.length === 0) {
     return (
-      <div className="grid xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 grid-cols-1 h-fit w-full gap-2 xl:mt-12 mt-4">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <ProductSkeleton key={index} />
-        ))}
-      </div>
+      <p className="text-center col-span-full mt-12">
+        No products found matching your criteria.
+      </p>
     );
   }
 

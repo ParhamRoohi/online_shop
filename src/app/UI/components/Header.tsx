@@ -16,7 +16,7 @@ import { styled, alpha } from "@mui/material/styles";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useCart } from "../../context/CartContext";
-import { getUser } from "@/app/api/data";
+import { getUserData } from "@/app/lib/actions";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import UserDetailsModal from "./UserDetailsModal";
@@ -51,11 +51,12 @@ const Search = styled("div")(({ theme }) => ({
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
-  marginRight: theme.spacing(2),
+  marginRight: theme.spacing(1),
   marginLeft: 0,
   width: "auto",
   [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(2),
     width: "auto",
   },
 }));
@@ -77,9 +78,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create("width"),
-    width: "12ch",
+    width: "8ch",
     "&:focus": {
-      width: "18ch",
+      width: "14ch",
     },
     [theme.breakpoints.up("sm")]: {
       width: "20ch",
@@ -114,18 +115,31 @@ function Header({
   const [user, setUser] = React.useState<User | null>(null);
   const [isUserDetailsOpen, setIsUserDetailsOpen] = React.useState(false);
   const router = useRouter();
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const [userId, setUserId] = React.useState("");
+  const [state, formAction] = React.useActionState(getUserData, {
+    success: false,
+    message: "",
+  });
 
   React.useEffect(() => {
-    const fetchUser = async () => {
-      const userId = sessionStorage.getItem("userId");
-      if (userId) {
-        const userData = await getUser(Number(userId));
-        setUser(userData);
-      }
-    };
-
-    fetchUser();
+    const id = sessionStorage.getItem("userId");
+    if (id) {
+      setUserId(id);
+    }
   }, []);
+
+  React.useEffect(() => {
+    if (userId && !user) {
+      formRef.current?.requestSubmit();
+    }
+  }, [userId, user]);
+
+  React.useEffect(() => {
+    if (state.success && state.user) {
+      setUser(state.user);
+    }
+  }, [state]);
 
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -178,6 +192,9 @@ function Header({
       <Container maxWidth="2xl">
         <Toolbar disableGutters sx={{ px: { xs: 1, sm: 2 } }}>
           <Box sx={{ flexGrow: 0, mr: { xs: 1, sm: 2 } }}>
+            <form ref={formRef} action={formAction} style={{ display: "none" }}>
+              <input type="hidden" name="userId" value={userId} />
+            </form>
             {user ? (
               <>
                 <Tooltip title="Open settings">
@@ -236,7 +253,12 @@ function Header({
               </Button>
             )}
           </Box>
-          <Box sx={{ flexGrow: 1, display: "flex" }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+            }}
+          >
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -267,7 +289,7 @@ function Header({
           <Button
             color="inherit"
             onClick={handleOpenNavMenu}
-            sx={{ color: "white", textTransform: "none" }}
+            sx={{ color: "white", textTransform: "none", marginLeft: 2 }}
             endIcon={<ArrowDropDownIcon />}
           >
             {selectedCategory}
